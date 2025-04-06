@@ -164,3 +164,8 @@ SMS gateway integration.
 Attendance tracking via QR code or ID.
 
 Payment gateway integration for online renewals.
+
+![Gym Homepage](/Screenshot/Screenshot (39).png)
+
+/Screenshot
+/Screenshot (39).png
