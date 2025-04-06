@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Workout Plan</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+	<script defer src="script.js"></script>
+	<style>
+		* {
+			font-family: Arial, sans-serif;
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		/* Footer */
+		.footer {
+			margin-top: 10px;
+			background-color: #212529;
+			padding: 40px 0;
+			width: 100%;
+		}
+
+		.footer-content {
+			display: flex;
+			justify-content: space-between;
+		}
+
+		.footer-column {
+			flex: 1;
+			padding: 0 15px;
+		}
+
+		.footer-heading {
+			font-size: 16px;
+			margin-bottom: 20px;
+			letter-spacing: 1px;
+			color: white;
+		}
+
+		.footer-info {
+			font-size: 14px;
+			margin-bottom: 10px;
+			opacity: 0.8;
+			color: white;
+		}
+
+		.footer-icon {
+			margin-right: 10px;
+			font-size: 20px;
+			vertical-align: middle;
+		}
+
+		.footer-developer {
+			color: #fff;
+			text-align: center;
+			margin-top: 5px;
+			letter-spacing: 1px;
+			font-size: 25px;
+		}
+
+		/* Update these styles in your CSS */
+		.background-container {
+			position: fixed;
+			/* Change from absolute to fixed */
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			z-index: -1;
+			overflow: hidden;
+		}
+
+		.slider {
+			position: relative;
+			width: 100%;
+			height: 100vh;
+		}
+
+		.slide {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			background-size: cover;
+			background-position: center;
+			background-attachment: fixed;
+			/* This helps maintain full coverage */
+			opacity: 0;
+			transition: opacity 1s ease-in-out;
+		}
+
+		/* Ensure the body takes up full height */
+		body {
+			color: #fff;
+			background-color: #111;
+			min-height: 100vh;
+			margin: 0;
+			padding: 0;
+			overflow-x: hidden;
+			/* Prevent horizontal scrolling */
+		}
+		.active {
+			opacity: 1;
+		}
+
+		.gradient-btn {
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+.gradient-btn:hover {
+    background: linear-gradient(135deg, #0072ff, #00c6ff);
+}
+	</style>
+</head>
+
+<body>
+	<div id="navbar-container"></div>
+
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+			fetch("navbar.html") // Load navbar.html
+				.then(response => response.text())
+				.then(html => {
+					document.getElementById("navbar-container").innerHTML = html;
+
+					// Highlight Active Page
+					let currentPage = window.location.pathname.split("/").pop();
+					let navLinks = document.querySelectorAll(".navbar-nav .nav-link");
+
+					navLinks.forEach(link => {
+						if (link.getAttribute("href") === currentPage) {
+							link.classList.add("active");
+						} else {
+							link.classList.remove("active");
+						}
+					});
+				})
+				.catch(error => console.error("Error loading navbar:", error));
+		});
+	</script>
+	<!-- Background Image Slider (Replaced iframe with this slider) -->
+	<div class="background-container">
+		<div class="slider">
+			<div class="slide active" style="background-image:url('/images/DSC07576.jpg');"></div>
+			<div class="slide" style="background-image:url('/images/DSC07607.JPG');"></div>
+			<div class="slide" style="background-image:url('/images/DSC07619.JPG');"></div>
+			<div class="slide" style="background-image:url('/images/DSC07620.JPG');"></div>
+			<div class="slide" style="background-image:url('/images/DSC07635.JPG');"></div>
+			<div class="slide" style="background-image:url('/images/DSC07687.JPG');"></div>
+			<div class="slide" style="background-image:url('/images/DSC07752.JPG');"></div>
+		</div>
+	</div>
+	<script>
+		// Function for background slider
+		let index = 0;
+		const slides = document.querySelectorAll(".slide");
+
+		function nextSlide() {
+			slides[index].classList.remove("active");
+			index = (index + 1) % slides.length;
+			slides[index].classList.add("active");
+		}
+
+		setInterval(nextSlide, 3000);
+
+	</script>
+	<!-- Hidden Printable Content -->
+	<div id="printableWorkoutPlan" style="display: none;"></div>
+
+	<div class="container mt-5">
+		<h2 class="text-center mb-4" style="color: white; font-weight: bold;">Workout Plan Selection</h2>
+
+		<div class="row">
+			<!-- Workout Selection Panel -->
+			<div class="col-md-6">
+				<div class="card p-3 mb-4 shadow-sm">
+					<h4>Select Member</h4>
+					<select id="workoutMember" class="form-select mb-3">
+						<option value="">Loading members...</option>
+					</select>
+
+					<div class="d-flex gap-2 mb-3">
+
+						<button class="gradient-btn w-50" onclick="downloadWorkoutPlan()">Download Plan</button>
+					</div>
+
+					<h4>Select Day</h4>
+					<select id="daySelect" class="form-select mb-3">
+						<option value="Day 1">Day 1</option>
+						<option value="Day 2">Day 2</option>
+						<option value="Day 3">Day 3</option>
+						<option value="Day 4">Day 4</option>
+						<option value="Day 5">Day 5</option>
+						<option value="Day 6">Day 6</option>
+						<option value="Day 7">Day 7</option>
+					</select>
+
+					<h4>Select Workout</h4>
+					<select id="workoutSelect" class="form-select mb-3">
+						<option value="">Loading workouts...</option>
+					</select>
+
+					<h4>Enter Sets & Reps</h4>
+					<input type="text" id="setsRepsInput" class="form-control mb-3" placeholder="e.g. 3 sets x 10 reps">
+
+					<button class="gradient-btn w-100 mb-3" onclick="addWorkoutToPlan()">Add to Plan</button>
+
+					<div class="mb-2">
+						<input type="text" id="newWorkoutInput" class="form-control" placeholder="New Workout Name">
+						<button class="gradient-btn w-100 mt-2" onclick="addNewWorkout()">Add New Workout</button>
+					</div>
+				</div>
+			</div>
+
+			<!-- Final Workout Plan Display -->
+			<div class="col-md-6">
+				<div class="card p-3 shadow-sm">
+					<h3 class="mb-3">Final Workout Plan</h3>
+					<div id="finalWorkoutPlan" class="border p-3" style="min-height: 200px;">
+						<p>No workout added yet.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<!-- Add this somewhere in your HTML (can be hidden) -->
+	<img id="zeafitLogo" src="/images/Zealfit.jpg" style="display:none;" />
+
+	<!-- Existing JavaScript remains unchanged -->
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+			loadWorkoutMembers();  // Load members from DB
+			loadWorkouts();  // Load available workouts
+		});
+
+		let workoutPlan = {}; // Stores workouts by day and member
+
+		async function loadWorkoutMembers() {
+			try {
+				const response = await fetch("http://localhost:8080/members/all");
+				const members = await response.json();
+				const workoutMemberSelect = document.getElementById("workoutMember");
+				workoutMemberSelect.innerHTML = "<option value=''>Select Member</option>";
+
+				members.forEach(member => {
+					let option = new Option(member.name, member.name);
+					workoutMemberSelect.appendChild(option);
+
+				});
+			} catch (error) {
+				console.error("Error loading members:", error);
+				alert("⚠️ Failed to load workout members.");
+			}
+		}
+
+		async function addNewWorkout() {
+			const workoutName = document.getElementById("newWorkoutInput").value.trim();
+			if (!workoutName) {
+				alert("⚠️ Please enter a workout name!");
+				return;
+			}
+
+			try {
+				let response = await fetch("http://localhost:8080/workouts/add", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ name: workoutName })
+				});
+
+				if (!response.ok) throw new Error("Failed to add workout.");
+
+				alert("✅ Workout added successfully!");
+				document.getElementById("newWorkoutInput").value = ""; // Clear input
+				loadWorkouts(); // Refresh workout list
+			} catch (error) {
+				console.error("Error adding workout:", error);
+				alert("⚠️ Failed to add workout.");
+			}
+		}
+
+
+		async function loadWorkouts() {
+			try {
+				const response = await fetch("/workouts");
+				const workouts = await response.json();
+				const workoutSelect = document.getElementById("workoutSelect");
+				workoutSelect.innerHTML = "<option value=''>Select Workout</option>";
+
+				workouts.forEach(workout => {
+					let option = new Option(workout.name, workout.name);
+					workoutSelect.appendChild(option);
+				});
+			} catch (error) {
+				console.error("Error loading workouts:", error);
+				alert("⚠️ Failed to load workouts.");
+			}
+		}
+
+		function addWorkoutToPlan() {
+			const memberName = document.getElementById("workoutMember").value;
+			const day = document.getElementById("daySelect").value;
+			const workout = document.getElementById("workoutSelect").value;
+			const setsReps = document.getElementById("setsRepsInput").value;
+
+			if (!memberName) {
+				alert("⚠️ Please select a member before adding a workout!");
+				return;
+			}
+
+			if (!day || !workout) {
+				alert("⚠️ Please select a day, workout, and enter sets/reps!");
+				return;
+			}
+
+			if (!workoutPlan[memberName]) {
+				workoutPlan[memberName] = {};
+			}
+
+			if (!workoutPlan[memberName][day]) {
+				workoutPlan[memberName][day] = [];
+			}
+
+			workoutPlan[memberName][day].push({ workout, setsReps });
+
+			updateWorkoutDisplay();
+		}
+
+		function updateWorkoutDisplay() {
+			const workoutDisplay = document.getElementById("finalWorkoutPlan");
+			workoutDisplay.innerHTML = "";
+
+			Object.keys(workoutPlan).forEach(member => {
+				const memberDiv = document.createElement("div");
+				memberDiv.innerHTML = `<h3>${member}'s Workout Plan</h3>`;
+
+				Object.keys(workoutPlan[member]).forEach(day => {
+					const dayDiv = document.createElement("div");
+					dayDiv.innerHTML = `<h4>${day}</h4>`;
+
+					workoutPlan[member][day].forEach(item => {
+						let p = document.createElement("p");
+						p.textContent = `${item.workout} - ${item.setsReps}`;
+						dayDiv.appendChild(p);
+					});
+
+					memberDiv.appendChild(dayDiv);
+				});
+
+				workoutDisplay.appendChild(memberDiv);
+			});
+		}
+
+		function saveWorkoutPlan() {
+			let memberId = document.getElementById("workoutMember").value; // ✅ fixed ID
+			let workoutPlanText = document.getElementById("finalWorkoutPlan").innerText.trim();
+
+			if (!memberId) {
+				alert("⚠️ Please select a member before saving the workout plan.");
+				return;
+			}
+
+			if (!workoutPlanText) {
+				alert("⚠️ No workout plan found! Please add items before saving.");
+				return;
+			}
+
+			let requestData = {
+				memberId: memberId,
+				workoutPlan: workoutPlanText
+			};
+
+			fetch("http://localhost:8080/workout/save", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify(requestData)
+			})
+				.then(response => {
+					if (!response.ok) {
+						throw new Error("Failed to save workout plan");
+					}
+					return response.json();
+				})
+				.then(data => {
+					alert("✅ Workout Plan Saved Successfully!");
+					console.log("Response Data:", data);
+				})
+				.catch(error => {
+					console.error("❌ Error:", error);
+					alert("⚠️ Failed to s	ave the workout plan.");
+				});
+		}
+
+		function downloadWorkoutPlan() {
+				const memberName = document.getElementById("workoutMember").value;
+				if (!memberName || !workoutPlan[memberName]) {
+					alert("⚠️ Please select a member and add a workout plan.");
+					return;
+				}
+
+				// Prepare a printable version
+				const printableDiv = document.getElementById("printableWorkoutPlan");
+				printableDiv.innerHTML = ""; // Clear previous content
+				printableDiv.style.display = "block"; // Make visible for PDF
+
+				const title = document.createElement("h2");
+				title.textContent = `${memberName}'s Workout Plan`;
+				title.style.textAlign = "center";
+				title.style.marginBottom = "20px";
+				printableDiv.appendChild(title);
+
+				Object.keys(workoutPlan[memberName]).forEach((day, idx, array) => {
+					const daySection = document.createElement("div");
+					daySection.innerHTML = `<h3>${day}</h3>`;
+					daySection.style.marginBottom = "10px";
+
+					workoutPlan[memberName][day].forEach(item => {
+						const p = document.createElement("p");
+						p.textContent = `${item.workout} - ${item.setsReps}`;
+						daySection.appendChild(p);
+					});
+
+					// Add page break after each day except the last one
+					if (idx !== array.length - 1) {
+						const pageBreak = document.createElement("div");
+						pageBreak.style.pageBreakAfter = "always";
+						daySection.appendChild(pageBreak);
+					}
+
+					printableDiv.appendChild(daySection);
+				});
+
+				// Generate PDF
+				html2pdf()
+					.set({
+						margin: 10,
+						filename: `${memberName}_WorkoutPlan.pdf`,
+						image: { type: 'jpeg', quality: 0.98 },
+						html2canvas: { scale: 2, logging: true, useCORS: true },
+						jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+					})
+					.from(printableDiv)
+					.save()
+					.then(() => {
+						// Hide the div again after PDF is generated
+						printableDiv.style.display = "none";
+					});
+			}
+
+	</script>
+</body>
+
+</html>

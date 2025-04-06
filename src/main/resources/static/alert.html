@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Expiring Memberships</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			font-family: 'Montserrat', sans-serif;
+		}
+
+		body {
+			color: #fff;
+			background-color: #111;
+			display: flex;
+			flex-direction: column;
+			min-height: 100vh;
+		}
+
+		/* Navbar */
+		#navbar-container {
+			width: 100%;
+			position: fixed;
+			top: 0;
+			left: 0;
+			z-index: 1000;
+		}
+
+		/* Background Slider */
+		        .background-container {
+		            position: absolute;
+		            top: 0;
+		            left: 0;
+		            width: 100%;
+		            height: 100%;
+		            z-index: -1;
+		            overflow: hidden;
+		        }
+
+		        .slider {
+		            position: relative;
+		            width: 100%;
+		            height: 100vh;
+		        }
+
+		        .slide {
+		            position: absolute;
+		            width: 100%;
+		            height: 100%;
+		            background-size: cover;
+		            background-position: center;
+		            opacity: 0;
+		            transition: opacity 1s ease-in-out;
+		        }
+
+		        .active {
+		            opacity: 1;
+		        }
+
+		.main-container {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			padding: 100px 20px 40px;
+			position: relative;
+			z-index: auto;
+		
+		}
+
+		.table-heading{
+			font-weight: 700;
+			margin-bottom: 15px;
+			position: relative;
+			padding-bottom: 10px;
+			letter-spacing: 1px;
+			text-transform: uppercase;
+		}
+
+		.table-heading:after {
+			content: '';
+			position: absolute;
+			bottom: 0;
+			left: 50%;
+			transform: translateX(-50%);
+			width: 60px;
+			height: 3px;
+			background-color: currentColor;
+		}
+		
+	
+		
+		/* Card header with flex column */
+		.card-header-column {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			padding: 15px;
+		}
+	
+		/* Footer */
+		/* Footer */
+.footer {
+    margin-top: 10px;
+    background-color: #212529;
+    padding: 40px 0;
+    width: 100%;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+}
+
+.footer-column {
+    flex: 1;
+    padding: 0 15px;
+}
+
+.footer-heading {
+    font-size: 16px;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+    color: white;
+}
+
+.footer-info {
+    font-size: 14px;
+    margin-bottom: 10px;
+    opacity: 0.8;
+    color: white;
+}
+
+.footer-icon {
+    margin-right: 10px;
+    font-size: 20px;
+    vertical-align: middle;
+}
+
+.footer-developer {
+    color: #fff;
+    text-align: center;
+    margin-top: 5px;
+    letter-spacing: 1px;
+    font-size: 25px;
+}
+
+	</style>
+</head>
+
+<body>
+
+	<!-- Navbar -->
+	<div id="navbar-container"></div>
+
+	<!-- Background Image Slider (Replaced iframe with this slider) -->
+	<div class="background-container">
+	    <div class="slider">
+	        <div class="slide active" style="background-image:url('/images/DSC07576.jpg');"></div>
+	        <div class="slide" style="background-image:url('/images/DSC07607.JPG');"></div>
+	        <div class="slide" style="background-image:url('/images/DSC07619.JPG');"></div>
+	        <div class="slide" style="background-image:url('/images/DSC07620.JPG');"></div>
+	        <div class="slide" style="background-image:url('/images/DSC07635.JPG');"></div>
+	        <div class="slide" style="background-image:url('/images/DSC07687.JPG');"></div>
+	        <div class="slide" style="background-image:url('/images/DSC07752.JPG');"></div>
+	    </div>
+	</div>
+	<script>
+	    let index = 0;
+	    const slides = document.querySelectorAll(".slide");
+
+	    function nextSlide() {
+	        slides[index].classList.remove("active");
+	        index = (index + 1) % slides.length;
+	        slides[index].classList.add("active");
+	    }
+
+	    setInterval(nextSlide, 3000);
+	</script>
+	<div class="main-container">
+	<div class="modal fade" id="renewMembershipModal" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Renew Membership</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body">
+					<form id="renewForm">
+						<input type="hidden" id="renewMemberId">
+						<label for="renewMembershipType">Select Renewal Duration:</label>
+						<select class="form-control mt-2" id="membershipType">
+							<option value="1">1 Month</option>
+													    <option value="2">2 Months</option>
+													    <option value="3">3 Months</option>
+													    <option value="4">4 Months</option>
+													    <option value="5">5 Months</option>
+													    <option value="6">6 Months</option>
+													    <option value="7">7 Months</option>
+													    <option value="8">8 Months</option>
+													    <option value="9">9 Months</option>
+													    <option value="10">10 Months</option>
+													    <option value="11">11 Months</option>
+													    <option value="12">12 Months (1 Year)</option>
+													    <option value="13">13 Months</option>
+													    <option value="14">14 Months</option>
+													    <option value="15">15 Months</option>n>
+						</select>
+						<label class="mt-2">New Start Date:</label>
+						<input type="date" class="form-control" id="membershipStartDate" onchange="calculateEndDate()"">
+			                    <label class=" mt-2">New End Date:</label>
+						<input type="date" class="form-control" id="membershipEndDate">
+						<button type="button" class="btn btn-success w-100 mt-3" onclick="confirmRenewal()">Confirm
+							Renewal</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	</div>
+
+	<!-- Memberships Lists Side by Side -->
+	<div class="container mt-4" style="flex:1;">
+		<div class="row">
+			<!-- Memberships Ending in Selected Month -->
+			<div class="col-md-4">
+				<div class="card shadow-lg">
+					<div class="card-header bg-secondary text-center text-white d-flex justify-content-between align-items-center">
+						<h5 class="table-heading">Memberships Ending</h5>
+						<!-- Dropdown for selecting month -->
+						<select id="monthSelect" class="form-select w-auto text-dark">
+						</select>
+					</div>
+					<div class="card-body p-0">
+						<table class="table table-bordered mb-0">
+							<thead class="table-dark">
+								<tr>
+									<th>Photo</th>
+									<th>Name</th>
+									<th>Phone</th>
+									<th>Renew</th>
+								</tr>
+							</thead>
+							<tbody id="membershipList">
+								<!-- Members will be loaded here dynamically -->
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+
+
+			<!-- Expiring in 2 Days -->
+			<div class="col-md-4">
+				<div class="card shadow-lg">
+					<div class="card-header bg-secondary text-center text-white">
+						<h5 class="table-heading">Expiring in 2 Days</h5>
+					</div>
+					<div class="card-body p-0">
+						<table class="table table-bordered mb-0">
+							<thead class="table-dark">
+								<tr>
+									<th>Photo</th>
+									<th>Name</th>
+									<th>Phone</th>
+									<th>Action</th>
+								</tr>
+							</thead>
+							<tbody id="twoDaysList">
+								<tr>
+									<td colspan="4" class="text-center">Loading...</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+
+			<!-- Expiring in 1 Day -->
+			<div class="col-md-4" >
+				<div class="card shadow-lg">
+					<div class="card-header bg-secondary text-center text-white">
+						<h5 class="table-heading">Expiring in 1 Day</h5>
+					</div>
+					<div class="card-body p-0">
+						<table class="table table-bordered mb-0">
+							<thead class="table-dark">
+								<tr>
+									<th>Photo</th>
+									<th>Name</th>
+									<th>Phone</th>
+									<th>Action</th>
+								</tr>
+							</thead>
+							<tbody id="oneDayList">
+								<tr>
+									<td colspan="4" class="text-center">Loading...</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<footer class="footer" >
+		<div class="container">
+			<div class="footer-content">
+				<div class="footer-column">
+					<h3 class="footer-heading">CONTACT</h3>
+					<p class="footer-info">
+						<span class="footer-icon">&#9993;</span> zealfitofficial@gmail.com
+					</p>
+					<p class="footer-info">
+						<span class="footer-icon">&#9742;</span> +91 8177895696
+					</p>
+				</div>
+				<div class="footer-column">
+					<h3 class="footer-heading">OPEN HOURS</h3>
+					<p class="footer-info">MONDAY - SATERDAY: 6:00AM - 10:00PM</p>
+					<p class="footer-info">SUNDAY: 7:00AM - 12:00PM</p>
+				</div>
+				<div class="footer-column">
+					<h3 class="footer-heading">LOCATION</h3>
+					<p class="footer-info">SECTOR NO.26 ,PLOT NO 1 SDC,</p>
+					<p class="footer-info">PRADHIKARAN PCNTA</p>
+					<p class="footer-info">PUNE-44</p>
+				</div>
+			</div>
+		</div>
+		<h2 class="footer-developer">Developed by CodeCravers Limited</h2>
+	</footer>
+
+<script>
+	//function for importing navbar
+	document.addEventListener("DOMContentLoaded", function () {
+		fetch("navbar.html") // Load navbar.html
+			.then(response => response.text())
+			.then(html => {
+				document.getElementById("navbar-container").innerHTML = html;
+
+				// Highlight Active Page
+				let currentPage = window.location.pathname.split("/").pop();
+				let navLinks = document.querySelectorAll(".navbar-nav .nav-link");
+
+				navLinks.forEach(link => {
+					if (link.getAttribute("href") === currentPage) {
+						link.classList.add("active");
+					} else {
+						link.classList.remove("active");
+					}
+				});
+			})
+			.catch(error => console.error("Error loading navbar:", error));
+	});
+
+	function fetchMembers(days, listId) {
+		fetch(`http://localhost:8080/members/expiring/${days}`)
+			.then(response => response.json())
+			.then(data => {
+				let membersHTML = "";
+
+				if (!Array.isArray(data) || data.length === 0) {
+					membersHTML = "<tr><td colspan='4' class='text-center'>No members found</td></tr>";
+				} else {
+					data.forEach(member => {
+						let imageSrc = member.image ? `data:image/jpeg;base64,${member.image}` : 'default-avatar.png';
+						membersHTML += `
+                                <tr>
+                                    <td><img src='${imageSrc}' alt='Member' class='img-thumbnail' width='50' height='50'></td>
+                                    <td>${member.name}</td>
+                                    <td>${member.contact}</td>
+                                    <td><button class='btn btn-success btn-sm' onclick='renewMembership(${member.id})'>Renew</button></td>
+                                </tr>`;
+					});
+				}
+
+				document.getElementById(listId).innerHTML = membersHTML;
+			})
+			.catch(error => {
+				console.error(`Error fetching ${days}-day expiring members:`, error);
+			});
+	}
+	// Send Renewal Request
+	function confirmRenewal() {
+		let memberId = document.getElementById("renewMemberId").value;
+		let membershipType = document.getElementById("membershipType").value;
+		let startDate = document.getElementById("membershipStartDate").value;
+		let endDate = document.getElementById("membershipEndDate").value;
+
+		if (!memberId || !membershipType || !startDate || !endDate) {
+			alert("Please fill all fields!");
+			return;
+		}
+
+		fetch(`http://localhost:8080/members/renew/${memberId}`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				membershipType: membershipType,
+				membershipStartDate: startDate,
+				membershipEndDate: endDate
+			})
+		})
+			.then(response => response.text())
+			.then(data => {
+				alert(data);
+				location.reload();
+			})
+			.catch(error => console.error("Error:", error));
+	}
+
+	function renewMembership(id) {
+		$("#renewMemberId").val(id);
+		$("#renewMembershipModal").modal("show");
+
+		let today = new Date().toISOString().split("T")[0];
+		$("#renewStartDate").val(today);
+		calculateRenewEndDate();
+	}
+
+
+	window.onload = function () {
+		fetchMembers(2, "twoDaysList");
+		fetchMembers(1, "oneDayList");
+	};
+
+	$(document).ready(function () {
+		let today = new Date();
+		let currentYear = today.getFullYear();
+		let currentMonth = today.getMonth() + 1; // JS months are 0-based (Jan = 0)
+
+		// Generate month options
+		let monthSelect = $("#monthSelect");
+		let months = [
+			"January", "February", "March", "April", "May", "June",
+			"July", "August", "September", "October", "November", "December"
+		];
+
+		for (let i = 0; i < months.length; i++) {
+			let monthNumber = i + 1;
+			let selected = (monthNumber === currentMonth) ? "selected" : "";
+			monthSelect.append(`<option value="${monthNumber}" ${selected}>${months[i]}</option>`);
+		}
+
+		function fetchMembers(month) {
+			fetch(`http://localhost:8080/members/expiring?month=${month}&year=${currentYear}`)
+				.then(response => response.json())
+				.then(data => {
+					let tbody = document.getElementById("membershipList");
+					tbody.innerHTML = ""; // Clear existing data
+
+					if (data.length === 0) {
+						tbody.innerHTML = `<tr><td colspan="5" class="text-center text-danger">No members found for this month.</td></tr>`;
+					} else {
+						data.forEach(member => {
+							let imageSrc = member.image ? `data:image/jpeg;base64,${member.image}` : 'default-avatar.png';
+							tbody.innerHTML += `
+					                        <tr>
+												<td><img src='${imageSrc}' alt='Member' class='img-thumbnail' width='50' height='50'></td>
+					                            <td>${member.name}</td>
+					                            <td>${member.contact}</td>
+					                            <td><button class="btn btn-sm btn-success" onclick="renewMembership(${member.id})">Renew</button></td>
+					                        </tr>
+					                    `;
+						});
+					}
+				})
+				.catch(error => {
+					console.error("Error fetching data:", error);
+					alert("Error fetching data.");
+				});
+		}
+
+
+		// Load current month members by default
+		fetchMembers(currentMonth);
+
+		// On month change, fetch new data
+		monthSelect.change(function () {
+			let selectedMonth = $(this).val();
+			fetchMembers(selectedMonth);
+		});
+	}); 	 	
+</script>
+
+</body>
+
+</html>

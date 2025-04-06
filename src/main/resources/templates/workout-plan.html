@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { border: 2px solid #ddd; padding: 20px; border-radius: 10px; }
+        .header { text-align: center; color: #333; }
+        .profile-img { width: 100px; height: 100px; border-radius: 50%; }
+        .title { font-size: 22px; font-weight: bold; color: #ff5722; }
+        .section { margin-top: 10px; padding: 10px; border-bottom: 2px solid #ddd; }
+        .plan { font-size: 16px; color: #555; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img class="profile-img" src="data:image/png;base64,[[${imageBase64}]]">
+            <h2>Workout Plan</h2>
+        </div>
+
+        <div class="section">
+            <p class="title">Member Details</p>
+            <p><strong>Name:</strong> [[${name}]]</p>
+            <p><strong>Contact:</strong> [[${contact}]]</p>
+        </div>
+
+        <div class="section">
+            <p class="title">Workout Plan</p>
+            <p class="plan">[[${plan}]]</p>
+        </div>
+    </div>
+</body>
+</html>

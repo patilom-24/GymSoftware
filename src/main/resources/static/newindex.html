@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YOGAFIT INDIA - The Ultimate Yoga & Fitness Experience</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        body {
+            color: #fff;
+            background-color: #111;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Background Slider */
+        .background-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .slider {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .active {
+            opacity: 1;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            padding-top: 80px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            color: rgb(255, 255, 128);
+        }
+
+        .hero-title {
+            font-size: 54px;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .hero-text {
+            font-size: 16px;
+            margin-bottom: 30px;
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: #212529;
+            padding: 40px 0;
+            width: 100%;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .footer-column {
+            flex: 1;
+            padding: 0 15px;
+        }
+
+        .footer-heading {
+            font-size: 16px;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+            color: white;
+        }
+
+        .footer-info {
+            font-size: 14px;
+            margin-bottom: 10px;
+            opacity: 0.8;
+            color: white;
+        }
+
+        .footer-icon {
+            margin-right: 10px;
+            font-size: 20px;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <div id="navbar-container"></div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <!-- Background Image Slider (Replaced iframe with this slider) -->
+        <div class="background-container">
+            <div class="slider">
+                <div class="slide active" style="background-image:url('/images/DSC07576.jpg');"></div>
+                <div class="slide" style="background-image:url('/images/DSC07607.JPG');"></div>
+                <div class="slide" style="background-image:url('/images/DSC07619.JPG');"></div>
+                <div class="slide" style="background-image:url('/images/DSC07620.JPG');"></div>
+                <div class="slide" style="background-image:url('/images/DSC07635.JPG');"></div>
+                <div class="slide" style="background-image:url('/images/DSC07687.JPG');"></div>
+                <div class="slide" style="background-image:url('/images/DSC07752.JPG');"></div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">The Path to Holistic Wellness & Strength</h1>
+                <p class="hero-text">Experience the ancient wisdom of yoga combined with modern fitness.<br>Discover balance of mind, body, and spirit through our authentic practices.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3 class="footer-heading">CONTACT</h3>
+                    <p class="footer-info">
+                        <span class="footer-icon">&#9993;</span> zealfitofficial@gmail.com
+                    </p>
+                    <p class="footer-info">
+                        <span class="footer-icon">&#9742;</span> +91 8177895696
+                    </p>
+                </div>
+                <div class="footer-column">
+                    <h3 class="footer-heading">OPEN HOURS</h3>
+					
+					               <p class="footer-info">MONDAY - SATERDAY: 6:00AM - 10:00PM</p>
+					               <p class="footer-info">SUNDAY: 7:00AM - 12:00PM</p>
+                </div>
+                <div class="footer-column">
+					<h3 class="footer-heading">LOCATION</h3>
+					               <p class="footer-info">SECTOR NO.26 ,PLOT NO 1 SDC,</p>
+								<p class="footer-info">PRADHIKARAN PCNTA</p>
+					               <p class="footer-info">PUNE-44</p> 
+                </div>
+            </div>
+        </div>
+        <h2 style="color: #fff; text-align: center; margin-top: 5px; letter-spacing: 1px; font-size: 25px;">Developed by CodeCravers Limited</h2>
+    </footer>
+
+    <script>
+        // Function for background slider
+        let index = 0;
+        const slides = document.querySelectorAll(".slide");
+
+        function nextSlide() {
+            slides[index].classList.remove("active");
+            index = (index + 1) % slides.length;
+            slides[index].classList.add("active");
+        }
+
+        setInterval(nextSlide, 3000);
+
+        // Function for importing navbar
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch("navbar.html") // Load navbar.html
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById("navbar-container").innerHTML = html;
+
+                    // Highlight Active Page
+                    let currentPage = window.location.pathname.split("/").pop();
+                    let navLinks = document.querySelectorAll(".navbar-nav .nav-link");
+
+                    navLinks.forEach(link => {
+                        if (link.getAttribute("href") === currentPage) {
+                            link.classList.add("active");
+                        } else {
+                            link.classList.remove("active");
+                        }
+                    });
+                })
+                .catch(error => console.error("Error loading navbar:", error));
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Gym Members</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<style>
+		/* Import Google Fonts */
+		@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+		* {
+		   margin: 0;
+		   padding: 0;
+		   box-sizing: border-box;
+		   font-family: 'Poppins', sans-serif;
+		}
+		body {
+			color: #fff;
+			display: flex;
+		 flex-direction: column;
+		 min-height: 100vh;
+		}
+
+		/* Background Slider */
+		.background-container {
+		    position: absolute;
+		    top: 0;
+		    left: 0;
+		    width: 100%;
+		    height: 100%;
+		    z-index: -1;
+		    overflow: hidden;
+		}
+
+		.slider {
+		    position: relative;
+		    width: 100%;
+		    height: 100vh;
+		}
+
+		.slide {
+		    position: absolute;
+		    width: 100%;
+		    height: 100%;
+		    background-size: cover;
+		    background-position: center;
+		    opacity: 0;
+		    transition: opacity 1s ease-in-out;
+		}
+
+		.active {
+		    opacity: 1;
+		}
+
+		/* member word */
+		.text-center.mb-4 {
+			letter-spacing: 1px;
+			color: #fff;
+			font-size: 50px;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+		}
+
+		/* Container */
+		.container {
+			max-width: 1200px;
+			margin: auto;
+			padding: 20px;
+		}
+
+		/* Table Image Styling */
+		.table img {
+			width: 50px;
+			height: 50px;
+			border-radius: 50%;
+			transition: transform 0.3s ease-in-out;
+		}
+
+		.table img:hover {
+			transform: scale(1.2);
+			box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+		}
+
+		/* Buttons */
+		.tab-btn {
+			margin: 5px;
+			padding: 12px 18px;
+			font-size: 16px;
+			font-weight: 600;
+			border-radius: 8px;
+			transition: all 0.3s ease-in-out;
+		}
+
+		.btn-primary {
+			background: linear-gradient(135deg, #00c6ff, #0072ff);
+			color: #fff;
+			border: none;
+		}
+
+		.btn-primary:hover {
+			background: linear-gradient(135deg, #0072ff, #00c6ff);
+			transform: translateY(-3px);
+			box-shadow: 0px 5px 15px rgba(0, 123, 255, 0.5);
+		}
+
+		/* Responsive Design */
+		@media (max-width: 768px) {
+			.navbar-nav .nav-link {
+				font-size: 16px;
+				padding: 8px 12px;
+			}
+
+			.navbar-brand {
+				font-size: 20px;
+			}
+
+			.table img {
+				width: 40px;
+				height: 40px;
+			}
+		}
+
+		/* Import Google Fonts */
+		@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+		/* Glassmorphism Effect */
+		.modal-content {
+			background: rgba(255, 255, 255, 0.1);
+			backdrop-filter: blur(15px);
+			border-radius: 12px;
+			border: 1px solid rgba(255, 255, 255, 0.2);
+			box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.3);
+			color: #fff;
+		}
+
+		/* Modal Header */
+		.modal-header {
+			background: rgba(255, 255, 255, 0.2);
+			border-top-left-radius: 16px;
+			border-top-right-radius: 16px;
+			border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+		}
+
+		.modal-title {
+			font-size: 1.5rem;
+			font-weight: bold;
+		}
+
+		.modal-footer {
+			border-top: 1px solid rgba(255, 255, 255, 0.2);
+			display: flex;
+			justify-content: space-between;
+		}
+
+		/* Buttons */
+		.btn {
+			padding: 12px 20px;
+			font-weight: 600;
+			border-radius: 8px;
+			transition: all 0.3s ease;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+		}
+
+		.btn-primary,
+		.btn-secondary,
+		.btn-success {
+			background-color:  #ffc107;
+			border: none;
+		}
+
+		.btn-primary:hover,
+		.btn-secondary:hover,
+		.btn-success:hover {
+			background-color: #fdde82;
+			transform: translateY(-2px);
+		}
+
+		.btn-info {
+			background: linear-gradient(135deg, #17a2b8, #007bff);
+			color: #fff;
+		}
+
+		.btn-info:hover {
+			transform: translateY(-2px);
+			box-shadow: 0px 4px 10px rgba(23, 162, 184, 0.5);
+		}
+
+		/* Form Inputs */
+		.form-control {
+			border-radius: 10px;
+			border: none;
+			padding: 12px;
+			font-size: 1rem;
+			background: rgba(255, 255, 255, 0.15);
+			color: #fff;
+			transition: all 0.3s ease-in-out;
+		}
+
+		.form-control::placeholder {
+			color: rgba(255, 255, 255, 0.6);
+		}
+
+		.form-control:focus {
+			border: 1px solid #00c6ff;
+			box-shadow: 0px 0px 10px rgba(0, 198, 255, 0.5);
+			outline: none;
+		}
+
+		/* File Input */
+		input[type="file"] {
+			background: rgba(255, 255, 255, 0.2);
+			padding: 10px;
+			border-radius: 8px;
+			border: none;
+		}
+
+		/* Membership Type Dropdown */
+		select {
+			border-radius: 10px;
+			padding: 12px;
+			font-size: 1rem;
+			background: rgba(255, 255, 255, 0.15);
+			color: #fff;
+			border: none;
+			transition: 0.3s ease-in-out;
+		}
+
+		input[type="file"]::file-selector-button {
+			background: #b0b0b0;
+			color: white;
+			border: none;
+			padding: 8px 12px;
+			border-radius: 10px;
+			height: auto;
+			cursor: pointer;
+			transition: 0.3s ease-in-out;
+		}
+
+		input[type="file"]::file-selector-button:hover {
+			background: #909090;
+		}
+
+		select:focus {
+			border: 1px solid #00c6ff;
+			box-shadow: 0px 0px 10px rgba(0, 198, 255, 0.5);
+			outline: none;
+		}
+
+		/* Member Details */
+		p {
+			font-size: 1.1rem;
+			margin-bottom: 8px;
+		}
+
+		strong {
+			color: #00c6ff;
+		}
+
+		/* Responsive Image */
+		.img-fluid {
+			max-width: 100%;
+			height: auto;
+			border-radius: 10px;
+			border: 2px solid rgba(255, 255, 255, 0.3);
+		}
+
+		/* Responsive Layout */
+		@media (max-width: 768px) {
+			.modal-body {
+				text-align: center;
+			}
+
+			.col-md-4 img {
+				max-width: 80%;
+			}
+
+			.btn {
+				font-size: 0.9rem;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<div id="navbar-container"></div>
+	<!-- Background Image Slider (Replaced iframe with this slider) -->
+	       <div class="background-container">
+	           <div class="slider">
+	               <div class="slide active" style="background-image:url('/images/DSC07576.jpg');"></div>
+	               <div class="slide" style="background-image:url('/images/DSC07607.JPG');"></div>
+	               <div class="slide" style="background-image:url('/images/DSC07619.JPG');"></div>
+	               <div class="slide" style="background-image:url('/images/DSC07620.JPG');"></div>
+	               <div class="slide" style="background-image:url('/images/DSC07635.JPG');"></div>
+	               <div class="slide" style="background-image:url('/images/DSC07687.JPG');"></div>
+	               <div class="slide" style="background-image:url('/images/DSC07752.JPG');"></div>
+	           </div>
+	       </div>
+		   <script>
+			// Function for background slider
+			let index = 0;
+			const slides = document.querySelectorAll(".slide");
+
+			function nextSlide() {
+			    slides[index].classList.remove("active");
+			    index = (index + 1) % slides.length;
+			    slides[index].classList.add("active");
+			}
+
+			setInterval(nextSlide, 3000);
+
+		   </script>
+	<div class="container mt-5">
+		<h2 class="text-center mb-4"> Members</h2>
+
+		<div class="text-end mb-3">
+			<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMemberModal">Add Member</button>
+			<button class="btn btn-secondary" onclick="exportToPDF()">Export to PDF</button>
+		</div>
+
+		<div class="d-flex justify-content-center mb-3">
+			<select class="form-select" onchange="filterMembers(this.value)">
+				<option value="active">Active Members</option>
+				<option value="expired">Expired Members</option>
+			</select>
+
+		</div>
+
+
+		<table class="table table-bordered table-striped text-center">
+			<thead class="table-dark">
+				<tr>
+					<th>Photo</th>
+					<th>Name</th>
+					<th>Email</th>
+					<th>Contact</th>
+					<th>Membership Duration</th>
+					<th>Start Date</th>
+					<th>End Date</th>
+					<th>Paid Amount</th>
+					<th>Pending Amount</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody id="membersList"></tbody>
+		</table>
+		<nav>
+			<ul class="pagination justify-content-center" id="pagination"></ul>
+		</nav>
+	</div>
+	<!-- Renew Membership Modal -->
+	<div class="modal fade" id="renewMembershipModal" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Renew Membership</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body">
+					<form id="renewForm">
+						<input type="hidden" id="renewMemberId">
+						<label for="renewMembershipType">Select Renewal Duration:</label>
+						<select class="form-control mt-2" id="membership_duration">
+						    <option value="1">1 Month</option>
+						    <option value="2">2 Months</option>
+						    <option value="3">3 Months</option>
+						    <option value="4">4 Months</option>
+						    <option value="5">5 Months</option>
+						    <option value="6">6 Months</option>
+						    <option value="7">7 Months</option>
+						    <option value="8">8 Months</option>
+						    <option value="9">9 Months</option>
+						    <option value="10">10 Months</option>
+						    <option value="11">11 Months</option>
+						    <option value="12">12 Months (1 Year)</option>
+						    <option value="13">13 Months</option>
+						    <option value="14">14 Months</option>
+						    <option value="15">15 Months</option>
+						</select>
+
+						<label class="mt-2">New Start Date:</label>
+						<input type="date" class="form-control" id="membershipStartDate" onchange="calculateEndDate()"">
+	                    <label class=" mt-2">New End Date:</label>
+						<input type="date" class="form-control" id="membershipEndDate">
+						<button type="button" class="btn btn-success w-100 mt-3" onclick="confirmRenewal()">Confirm
+							Renewal</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Member Details Modal -->
+	<div class="modal fade" id="memberDetailsModal" tabindex="-1" aria-labelledby="memberModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="memberModalLabel">Member Details</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-md-4 text-center">
+							<img id="memberPhoto" src="default.png" class="img-fluid rounded" alt="Member Photo"
+								style="max-height: 250px;">
+						</div>
+						<div class="col-md-8">
+
+							<p><strong>Name:</strong> <span id="memberName"></span></p>
+							<p><strong>Contact:</strong> <span id="memberContact"></span></p>
+							
+							<p><strong>Paid Amount:</strong> <span id="paidAmount"></span></p>
+							<p><strong>Due Amount:</strong> <span id="dueAmount"></span></p>
+							<p><strong>Membership End Date:</strong> <span id="endDate"></span></p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Update Member Modal -->
+	<!-- Update Member Modal -->
+
+	<div class="modal fade" id="addMemberModal" tabindex="-1">
+	    <div class="modal-dialog">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <h5 class="modal-title">Add Member</h5>
+	                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+	            </div>
+	            <div class="modal-body">
+	                <form id="addMemberForm">
+	                    <input type="text" class="form-control" name="name" placeholder="Name" required>
+	                    <input type="email" class="form-control mt-2" name="email" placeholder="Email" required>
+	                    <input type="text" class="form-control mt-2" name="contact" placeholder="Contact" required>
+						
+						<input type="date" class="form-control mt-2" name="membershipStartDate" placeholder="Start date" required>
+
+						<!-- Membership Duration Dropdown -->
+						<select class="form-control mt-2" name="membership_duration" placeholder="Duration" required>
+						    <option value="">Select Duration</option>
+						    <option value="1">1 Month</option>
+						    <option value="2">2 Months</option>
+						    <option value="3">3 Months</option>
+						    <option value="4">4 Months</option>
+						    <option value="5">5 Months</option>
+						    <option value="6">6 Months</option>
+						    <option value="7">7 Months</option>
+						    <option value="8">8 Months</option>
+						    <option value="9">9 Months</option>
+						    <option value="10">10 Months</option>
+						    <option value="11">11 Months</option>
+						    <option value="12">12 Months (1 Year)</option>
+						    <option value="13">13 Months</option>
+						    <option value="14">14 Months</option>
+						    <option value="15">15 Months</option>
+						</select>
+
+						<!-- Membership End Date Output -->
+					
+	                    <input type="number" class="form-control mt-2" name="paidAmount" placeholder="Paid Amount" required>
+	                    <input type="number" class="form-control mt-2" name="dueAmount" placeholder="Due Amount" required>
+	                    <input type="file" class="form-control mt-2" name="image">
+
+	                    <button type="submit" class="btn btn-success w-100 mt-3">Add Member</button>
+	                </form>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+
+
+		<!-- Footer Container -->
+		<div id="footer-container"></div>
+
+		<script>
+			// Load the footer dynamically
+			document.addEventListener("DOMContentLoaded", function () {
+				fetch("footer.html") // Load footer.html
+					.then(response => response.text())
+					.then(html => {
+						document.getElementById("footer-container").innerHTML = html;
+					})
+					.catch(error => console.error("Error loading footer:", error));
+			});
+		</script>
+	
+		<!-- Link to external CSS -->
+		<link rel="stylesheet" href="footer.css">
+	<script>
+		
+		
+		document.addEventListener("DOMContentLoaded", function () {
+			fetch("navbar.html") // Load navbar.html
+				.then(response => response.text())
+				.then(html => {
+					document.getElementById("navbar-container").innerHTML = html;
+
+					// Highlight Active Page
+					let currentPage = window.location.pathname.split("/").pop();
+					let navLinks = document.querySelectorAll(".navbar-nav .nav-link");
+
+					navLinks.forEach(link => {
+						if (link.getAttribute("href") === currentPage) {
+							link.classList.add("active");
+						} else {
+							link.classList.remove("active");
+						}
+					});
+				})
+				.catch(error => console.error("Error loading navbar:", error));
+		});
+
+		$(document).on("click", ".view-details-btn", function () {
+			let memberId = $(this).data("id");
+
+			$.ajax({
+				url: "/getMember/" + memberId,
+				type: "GET",
+				success: function (member) {
+					$("#memberPhoto").attr("src", member.photo || "default.png");
+					$("#memberName").text(member.name);
+					$("#memberContact").text(member.contact);
+					$("#membership_duration").text(member.membership_duration);
+					$("#paidAmount").text(member.paidAmount);
+					$("#dueAmount").text(member.dueAmount);
+					$("#endDate").text(member.endDate);
+
+					$("#memberDetailsModal").data("member-id", member.id); // Store member ID
+					$("#memberDetailsModal").modal("show");
+				},
+				error: function () {
+					alert("Failed to load member details.");
+				}
+			});
+		});
+		$(document).on("click", ".member-list-item", function () {
+			let memberId = $(this).data("id"); // Assuming data-id is set in the list
+			$("#memberId").text(memberId); // Update hidden span
+		});
+
+		function openMemberDetails(memberId) {
+			$("#memberDetailsModal").data("member-id", memberId); // Store memberId in modal
+
+			$.ajax({
+				url: "/api/members/" + memberId, // Fetch member details
+				type: "GET",
+				success: function (member) {
+					$("#memberid").val(member.id);
+					$("#memberName").text(member.name);
+					$("#memberContact").text(member.contact);
+					$("#membership_duration").text(member.membership_duration);
+					$("#memberEmail").text(member.email);
+					$("#memberPaidAmount").text(member.paidAmount);
+					$("#memberDueAmount").text(member.dueAmount);
+
+					$("#memberDetailsModal").modal("show");
+				},
+				error: function () {
+					alert("Failed to load member details.");
+				}
+			});
+		}
+
+
+		document.getElementById('addMemberForm').addEventListener('submit', function (event) {
+		    event.preventDefault(); // Prevent form default submission
+
+		    const formData = new FormData(this);
+
+		    fetch('/members/add', {
+		        method: 'POST',
+		        body: formData
+		    })
+		    .then(response => {
+		        if (!response.ok) {
+		            throw new Error(`Server responded with status: ${response.status}`);
+		        }
+		        return response.text(); // Expecting the response to include the calculated end date
+		    })
+		    .then(data => {
+		        alert(data); // ✅ Show API response, which includes the end date
+		        document.getElementById('addMemberForm').reset(); // ✅ Reset form
+		        $('#addMemberModal').modal('hide'); // ✅ Hide modal after success
+		    })
+		    .catch(error => {
+		        console.error('Error:', error);
+		        alert('Error adding member: ' + error.message);
+		    });
+		});
+
+       
+		
+		
+		function renewMembership(id) {
+			$("#renewMemberId").val(id);
+			$("#renewMembershipModal").modal("show");
+
+			let today = new Date().toISOString().split("T")[0];
+			$("#renewStartDate").val(today);
+			calculateRenewEndDate();
+		}
+
+		function exportToPDF() {
+			const { jsPDF } = window.jspdf;
+			let doc = new jsPDF();
+			doc.text("Gym Members List", 10, 10);
+			doc.save("Gym_Members.pdf");
+		}
+		$(document).ready(function () {
+			getActiveMembers(); // Load active members by default
+			updateMemberCounts();
+		});
+		function filterMembers(type) {
+			if (type === "active") {
+				getActiveMembers();
+			} else if (type === "expired") {
+				getExpiredMembers();
+			}
+		}
+
+		// Fetch Active Members
+		function getActiveMembers() {
+			console.log("Fetching Active Members..."); // Debugging
+			clearTable();
+			$.ajax({
+				url: "http://localhost:8080/members/active",
+				type: "GET",
+				success: function (data) {
+					console.log("Active Members Data:", data); // Debugging
+					renderMembers(data, "active");
+				},
+				error: function (xhr, status, error) {
+					console.error("Error fetching active members:", error);
+				}
+			});
+		}
+
+		// Fetch Expired Members
+		function getExpiredMembers() {
+			console.log("Fetching Expired Members..."); // Debugging
+			clearTable();
+			$.ajax({
+				url: "http://localhost:8080/members/expired",
+				type: "GET",
+				success: function (data) {
+					console.log("Expired Members Data:", data); // Debugging
+					renderMembers(data, "expired");
+				},
+				error: function (xhr, status, error) {
+					console.error("Error fetching expired members:", error);
+				}
+			});
+		}
+
+		// Fetch Blocked Members
+		function getBlockedMembers() {
+			console.log("Fetching Blocked Members..."); // Debugging
+			clearTable();
+			$.ajax({
+				url: "http://localhost:8080/members/blocked",
+				type: "GET",
+				success: function (data) {
+					console.log("Blocked Members Data:", data); // Debugging
+					renderMembers(data, "blocked");
+				},
+				error: function (xhr, status, error) {
+					console.error("Error fetching blocked members:", error);
+				}
+			});
+		}
+
+		// Render Members in Table
+		function renderMembers(data, type) {
+			let membersHTML = "";
+
+			if (!Array.isArray(data) || data.length === 0) {
+				$("#membersList").html("<tr><td colspan='10' class='text-center'>No members found</td></tr>");
+				return;
+			}
+
+			data.forEach(member => {
+				let actions = "";
+
+				if (type === "active") {
+					actions = `<button class='btn btn-warning btn-sm' onclick='blockMember(${member.id})'>Block</button>`;
+				} else if (type === "expired") {
+					actions = `<button class='btn btn-warning btn-sm' onclick='blockMember(${member.id})'>Block</button>
+		                       <button class='btn btn-success btn-sm' onclick='renewMembership(${member.id})'>Renew</button>`;
+				}
+
+				let imageSrc = member.image ? `data:image/jpeg;base64,${member.image}` : 'default-avatar.png';
+
+				membersHTML += `
+		            <tr>
+		                <td><img src='${imageSrc}' alt='Member' class='img-thumbnail' width='50' height='50'></td>
+						<td>
+						    <span class="text-primary" style="cursor:pointer" onclick="openMemberDetails(${member.id})">
+						          ${member.name}
+						      </span>
+						    </td>
+		                <td>${member.email}</td>
+		                <td>${member.contact}</td>
+		                <td>${member.membership_duration}</td>
+		                <td>${member.membershipStartDate}</td>
+		                <td>${member.membershipEndDate}</td>
+		                <td>${member.paidAmount}</td>
+		                <td>${member.dueAmount}</td>
+		                <td>${actions}</td>
+		            </tr>`;
+			});
+
+			$("#membersList").html(membersHTML);
+		}
+		function openMemberDetails(memberId) {
+			$.ajax({
+				url: `http://localhost:8080/members/${memberId}`,
+				type: "GET",
+				success: function (member) {
+					// Populate Modal Fields
+					let imageSrc = member.image ? `data:image/jpeg;base64,${member.image}` : "default.png";
+					$("#memberPhoto").attr("src", imageSrc);
+					$("#memberName").text(member.name);
+					$("#memberContact").text(member.contact);
+					$("#membership_duration").text(member.membership_duration);
+					$("#paidAmount").text(member.paidAmount);
+					$("#dueAmount").text(member.dueAmount);
+					$("#endDate").text(member.membershipEndDate);
+
+					// Show Modal
+					$("#memberDetailsModal").modal("show");
+				},
+				error: function () {
+					alert("Error fetching member details.");
+				}
+			});
+		}
+
+		// Clear Table Before Loading New Data
+		function clearTable() {
+			$("#membersList").html(""); // Clear the existing table content
+		}
+		// Update Member Counts
+		function updateMemberCounts() {
+			$.ajax({
+				url: "http://localhost:8080/members/active",
+				type: "GET",
+				success: function (data) {
+					$("#activeCount").text(data.length);
+				}
+			});
+
+			$.ajax({
+				url: "http://localhost:8080/members/expired",
+				type: "GET",
+				success: function (data) {
+					$("#expiredCount").text(data.length);
+				}
+			});
+
+			$.ajax({
+				url: "http://localhost:8080/members/blocked",
+				type: "GET",
+				success: function (data) {
+					$("#blockedCount").text(data.length);
+				}
+			});
+		}
+
+
+		// Open Renew Modal and Set Default Values
+		// Open Renew Modal and Set Default Values
+		function renewMembership(id) {
+			$("#renewMemberId").val(id);
+
+			// Fetch member details to get the last membership end date
+			$.get(`http://localhost:8080/members/${id}`, function (member) {
+				if (!member.membershipEndDate) {
+					alert("⚠ No previous membership end date found. Please enter manually.");
+					return;
+				}
+
+				let lastEndDate = new Date(member.membershipEndDate);
+				let formattedDate = lastEndDate.toISOString().split("T")[0];
+
+				$("#membershipStartDate").val(formattedDate);
+				$("#membershipEndDate").val(""); // Clear previous value
+
+				// Update confirm button to pass id to renewMembership
+				$("#confirmRenewButton").attr("onclick", `confirmMembership()`);
+
+				$("#renewMembershipModal").modal("show");
+			}).fail(function () {
+				alert("❌ Failed to fetch member details. Please try again.");
+			});
+		}
+
+		// Send Renewal Request
+		function confirmRenewal() {
+			let memberId = document.getElementById("renewMemberId").value;
+			let membership_duration = document.getElementById("membership_duration").value;
+			let startDate = document.getElementById("membershipStartDate").value;
+			let endDate = document.getElementById("membershipEndDate").value;
+
+			if (!memberId || !membership_duration || !startDate || !endDate) {
+				alert("Please fill all fields!");
+				return;
+			}
+
+			fetch(`http://localhost:8080/members/renew/${memberId}`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					membership_duration: membership_duration,
+					membershipStartDate: startDate,
+					membershipEndDate: endDate
+				})
+			})
+				.then(response => response.text())
+				.then(data => {
+					alert(data);
+					location.reload();
+				})
+				.catch(error => console.error("Error:", error));
+		}
+
+
+
+
+		function blockMember(id) {
+			$.post(`http://localhost:8080/members/block/${id}`)
+				.done(function () {
+					alert("Member Blocked Successfully!");
+					location.reload();  // Reload to reflect changes
+				})
+				.fail(function (jqXHR, textStatus, errorThrown) {
+					alert("Failed to block member! Error: " + textStatus + " - " + errorThrown);
+				});
+		}
+
+		function unblockMember(id) { $.post(`http://localhost:8080/members/unblock/${id}`, loadCounts); }
+		function loadCounts() { $.get("http://localhost:8080/members/counts", data => { $("#activeCount").text(data.active); $("#expiredCount").text(data.expired); $("#blockedCount").text(data.blocked); }); }
+		$(document).ready(loadCounts);
+	</script>
+</body>
+
+</html>

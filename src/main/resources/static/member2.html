@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Member Details | Elite Fitness Club</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="styles.css">
+	<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+	<style>
+		/* Gym Name Styling */
+		@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+		* {
+		            margin: 0;
+		            padding: 0;
+		            box-sizing: border-box;
+					font-family: 'Poppins', sans-serif;
+		        }
+		body {
+			color: #fff;
+			display: flex;
+		    flex-direction: column;
+			min-height: 100vh;
+		}
+
+		/* Background Slider */
+		.background-container {
+		    position: absolute;
+		    top: 0;
+		    left: 0;
+		    width: 100%;
+		    height: 100%;
+		    z-index: -1;
+		    overflow: hidden;
+		}
+
+		.slider {
+		    position: relative;
+		    width: 100%;
+		    height: 100vh;
+		}
+
+		.slide {
+		    position: absolute;
+		    width: 100%;
+		    height: 100%;
+		    background-size: cover;
+		    background-position: center;
+		    opacity: 0;
+		    transition: opacity 1s ease-in-out;
+		}
+
+		.active {
+		    opacity: 1;
+		}
+		
+		/* Search Bar */
+		#searchInput {
+			display: block;
+			margin: 15px auto;
+			border-radius: 10px;
+			padding: 10px;
+			font-size: 18px;
+			width: 40%;
+		}
+
+		#memberImage {
+			object-fit: cover;
+			/* Ensures the image fills the circle properly */
+			width: 120px;
+			/* Set fixed width */
+			height: 120px;
+			/* Set fixed height */
+			border-radius: 50%;
+			/* Ensures it's a perfect circle */
+		}
+
+		/* Member Cards */
+		.member-card {
+			background: #fff;
+			border-radius: 10px;
+			padding: 15px;
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+			transition: 0.3s;
+		}
+
+		.member-card:hover {
+			transform: scale(1.03);
+			box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+		}
+
+		/* Buttons */
+		.btn-update {
+			background: #ff9800;
+			color: white;
+			font-weight: bold;
+		}
+
+		.btn-history {
+			background: #007bff;
+			color: white;
+			font-weight: bold;
+		}
+
+		.member-details-box {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			background-color: #f9f9f9;
+			border-radius: 10px;
+			padding: 20px;
+			margin-top: 20px auto;
+		}
+
+		.member-details-box img {
+			border-radius: 50%;
+			object-fit: cover;
+		}
+
+		.member-details-box .detail-body {
+			text-align: center;
+		}
+
+		.member-details-box .detail-footer {
+			margin-top: 10px;
+		}
+
+		button {
+			
+			padding: 8px 15px;
+			margin-top: 10px;
+			cursor: pointer;
+			background: linear-gradient(135deg, #00c6ff, #0072ff);
+			color: white;
+			border: none;
+			border-radius: 5px;
+		}
+
+		button:hover {
+			background: linear-gradient(135deg, #0072ff, #00c6ff);
+		}
+
+		.table-container {
+			max-width: 1500px;
+			/* Same as your .container */
+			margin: auto;
+			/* Center it */
+			padding: 10px;
+			/* Add spacing */
+			border-radius: 10px;
+		}
+
+		.table {
+			width: 100%;
+			/* Make it fit inside the container */
+		}
+
+		/* Footer */
+.footer {
+    margin-top: 10px;
+    background-color: #212529;
+    padding: 40px 0;
+    width: 100%;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+}
+
+.footer-column {
+    flex: 1;
+    padding: 0 15px;
+}
+
+.footer-heading {
+    font-size: 16px;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+    color: white;
+}
+
+.footer-info {
+    font-size: 14px;
+    margin-bottom: 10px;
+    opacity: 0.8;
+    color: white;
+}
+
+.footer-icon {
+    margin-right: 10px;
+    font-size: 20px;
+    vertical-align: middle;
+}
+
+.footer-developer {
+    color: #fff;
+    text-align: center;
+    margin-top: 5px;
+    letter-spacing: 1px;
+    font-size: 25px;
+}
+
+	</style>
+
+</head>
+
+<body>
+	<div id="navbar-container"></div>
+	<!-- Background Image Slider (Replaced iframe with this slider) -->
+	       <div class="background-container">
+	           <div class="slider">
+	               <div class="slide active" style="background-image:url('/images/DSC07576.jpg');"></div>
+	               <div class="slide" style="background-image:url('/images/DSC07607.JPG');"></div>
+	               <div class="slide" style="background-image:url('/images/DSC07619.JPG');"></div>
+	               <div class="slide" style="background-image:url('/images/DSC07620.JPG');"></div>
+	               <div class="slide" style="background-image:url('/images/DSC07635.JPG');"></div>
+	               <div class="slide" style="background-image:url('/images/DSC07687.JPG');"></div>
+	               <div class="slide" style="background-image:url('/images/DSC07752.JPG');"></div>
+	           </div>
+	       </div>
+		   <script>
+		       let index = 0;
+		       const slides = document.querySelectorAll(".slide");
+
+		       function nextSlide() {
+		           slides[index].classList.remove("active");
+		           index = (index + 1) % slides.length;
+		           slides[index].classList.add("active");
+		       }
+
+		       setInterval(nextSlide, 3000);
+		   </script>
+	
+	<div class="modal fade" id="updateMemberModal" tabindex="-1" aria-labelledby="updateMemberLabel" aria-hidden="true">
+	    <div class="modal-dialog modal-dialog-centered">
+	        <div class="modal-content">
+	            <div class="modal-header bg-warning text-dark">
+	                <h5 class="modal-title" id="updateMemberLabel">Update Member Details</h5>
+	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	            </div>
+	            <div class="modal-body">
+	                <form id="updateMemberForm">
+	                    <input type="hidden" id="updateMemberId">
+
+	                    <div class="mb-3 text-center">
+	                        <img id="updateMemberImagePreview" class="img-thumbnail rounded-circle mb-2" width="100" height="100">
+	                        <input type="file" name="image" id="updateMemberImage" class="form-control">
+	                    </div>
+
+	                    <div class="mb-3">
+	                        <label class="form-label">Name</label>
+	                        <input type="text" name="name" id="updateMemberName" class="form-control">
+	                    </div>
+
+	                    <div class="mb-3">
+	                        <label class="form-label">Email</label>
+	                        <input type="email" name="email" id="updateMemberEmail" class="form-control">
+	                    </div>
+
+	                    <div class="mb-3">
+	                        <label class="form-label">Contact</label>
+	                        <input type="text" name="contact" id="updateMemberContact" class="form-control">
+	                    </div>
+
+	                    <div class="mb-3">
+	                        <label class="form-label">Membership Duration (in months)</label>
+	                        <input type="text" name="duration" id="updateMemberDuration" class="form-control">
+	                    </div>
+
+	                    <div class="mb-3">
+	                        <label class="form-label">Start Date</label>
+	                        <input type="date" name="startdate" id="updateMemberStartDate" class="form-control">
+	                    </div>
+
+	                    <div class="mb-3">
+	                        <label class="form-label">Paid Amount</label>
+	                        <input type="number" name="paidamount" id="updateMemberPaidAmount" class="form-control">
+	                    </div>
+
+	                    <div class="mb-3">
+	                        <label class="form-label">Pending Amount</label>
+	                        <input type="number" name="dueamount" id="updateMemberDueAmount" class="form-control">
+	                    </div>
+
+	                    <button type="submit" class="btn btn-success">Save Changes</button>
+	                </form>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+
+	<!-- Search Bar -->
+
+	<input type="text" id="searchInput" class="form-control"
+		placeholder="🔍 Search MemberSearch by Name, Email, or Mobile No." onkeyup="searchMember()">
+	<div class="table-container">
+		<table class="table table-bordered mt-3">
+			<tbody id="membersTable">
+				<!-- Members will be dynamically inserted here -->
+			</tbody>
+		</table>
+	</div>
+
+	<!-- Member Details Modal -->
+	<div class="modal fade" id="memberDetailsModal" tabindex="-1" aria-labelledby="memberDetailsLabel"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header bg-primary text-white">
+					<h5 class="modal-title" id="memberDetailsLabel">Member Details</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="card text-center">
+						<div class="card-body">
+							<p id="memberid" class="text"></p>
+							<img id="memberImage" class="img-thumbnail rounded-circle mb-3"
+								style="width: 120px; height: 120px; object-fit: cover; object-position: center;" />
+							<h4 id="memberName" class="text-primary"></h4>
+							<p id="memberEmail" class="mb-1"></p>
+							<p id="memberMobile" class="mb-1"></p>
+							<hr>
+							<p id="memberMembership_duration" class="fw-bold"></p>
+							<p id="memberPaidAmount" class="text-success"></p>
+							<p id="memberDueAmount" class="text-danger"></p>
+							<p id="memberStartDate"></p>
+							<p id="memberEndDate"></p>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button id="unblockBtn" class="btn btn-warning" style="display: none;">Unblock</button>
+					<button id="updateBtn" class="btn btn-warning" style="display: none;"
+						onclick="openUpdateForm()">Update</button>
+					<button id="historyBtn" class="btn btn-secondary" style="display: none;"
+						onclick="viewHistory()">View History</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="renewalHistoryModal" tabindex="-1" aria-labelledby="renewalHistoryLabel" aria-hidden="true">
+	    <div class="modal-dialog">
+	        <div class="modal-content">
+	            <div class="modal-header bg-secondary text-white">
+	                <h5 class="modal-title" id="renewalHistoryLabel">Renewal History</h5>
+	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	            </div>
+	            <div class="modal-body">
+	                <ul id="renewalHistoryList" class="list-group"></ul>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	<footer class="footer">
+		<div class="container">
+			<div class="footer-content">
+				<div class="footer-column">
+					<h3 class="footer-heading">CONTACT</h3>
+					<p class="footer-info">
+						<span class="footer-icon">&#9993;</span> zealfitofficial@gmail.com
+					</p>
+					<p class="footer-info">
+						<span class="footer-icon">&#9742;</span> +91 8177895696
+					</p>
+				</div>
+				<div class="footer-column">
+					<h3 class="footer-heading">OPEN HOURS</h3>
+					<p class="footer-info">MONDAY - SATERDAY: 6:00AM - 10:00PM</p>
+					<p class="footer-info">SUNDAY: 7:00AM - 12:00PM</p>
+				</div>
+				<div class="footer-column">
+					<h3 class="footer-heading">LOCATION</h3>
+					<p class="footer-info">SECTOR NO.26 ,PLOT NO 1 SDC,</p>
+					<p class="footer-info">PRADHIKARAN PCNTA</p>
+					<p class="footer-info">PUNE-44</p>
+				</div>
+			</div>
+		</div>
+		<h2 class="footer-developer">Developed by CodeCravers Limited</h2>
+	</footer>
+	
+
+	<script>
+		//function for importing navbar
+		document.addEventListener("DOMContentLoaded", function () {
+			fetch("navbar.html") // Load navbar.html
+				.then(response => response.text())
+				.then(html => {
+					document.getElementById("navbar-container").innerHTML = html;
+
+					// Highlight Active Page
+					let currentPage = window.location.pathname.split("/").pop();
+					let navLinks = document.querySelectorAll(".navbar-nav .nav-link");
+
+					navLinks.forEach(link => {
+						if (link.getAttribute("href") === currentPage) {
+							link.classList.add("active");
+						} else {
+							link.classList.remove("active");
+						}
+					});
+				})
+				.catch(error => console.error("Error loading navbar:", error));
+		});
+		function viewHistory() {
+			let memberId = document.getElementById("memberid").textContent.trim(); 
+			console.log("Retrieved Member ID:", memberId); // Debugging
+
+		    if (!memberId) {
+		        alert("Error: Member ID not found!");
+		        return;
+		    }
+
+		    fetch(`http://localhost:8080/members/history/${memberId}`)
+		        .then(response => {
+		            if (!response.ok) {
+		                throw new Error("No renewal history found or invalid ID.");
+		            }
+		            return response.json();
+		        })
+		        .then(data => {
+		            let historyList = document.getElementById("renewalHistoryList");
+		            historyList.innerHTML = ""; // Clear old history
+
+		            if (!data || data.length === 0) {
+		                historyList.innerHTML = "<p class='text-center text-danger'>No renewal history found.</p>";
+		            } else {
+						data.forEach(date => {
+						    let listItem = document.createElement("li");
+						    listItem.className = "list-group-item";
+						    listItem.textContent = date; // Displaying the date
+						    historyList.appendChild(listItem);
+						});
+}
+
+		            // Show the modal
+		            let historyModal = new bootstrap.Modal(document.getElementById("renewalHistoryModal"));
+		            historyModal.show();
+		        })
+		        .catch(error => {
+		            alert(error.message);
+		        });
+		}
+
+
+
+		// Function to search for members
+		// Function to search for members
+		function searchMember() {
+			let input = document.getElementById("searchInput").value.trim();
+
+			// Fetch member data based on the search query
+			fetch(`http://localhost:8080/members/search?query=${input}`)
+				.then(response => response.json())
+				.then(data => {
+					let tableBody = document.getElementById("membersTable");
+					tableBody.innerHTML = ""; // Clear table before inserting new results
+
+					// Iterate through the search results and populate the table
+					data.forEach(member => {
+						let row = document.createElement("tr");
+
+						row.innerHTML = `
+		                    <td>${member.id}</td>
+		                    <td><img src="${member.image ? `data:image/jpeg;base64,${member.image}` : 'default-avatar.png'}" 
+		                             alt="Member" class="img-thumbnail" width="50" height="50"></td>
+		                    <td>${member.name}</td>
+		                    <td>${member.email}</td>
+		                    <td>${member.contact}</td>
+		                    <td>${member.membership_duration}</td>
+		                    <td>${member.status}</td>
+		                    <td>${member.membershipEndDate}</td>
+		                    <td>
+		                        <button class="btn btn-primary btn-sm" 
+		                            data-member='${JSON.stringify(member)}'
+		                            onclick="showMemberDetails(this)">
+		                            View Details
+		                        </button>
+		                    </td>
+		                `;
+
+						tableBody.appendChild(row);
+					});
+				})
+				.catch(error => console.error("Error fetching members:", error));
+		}
+
+		function showMemberDetails(button) {
+			// Retrieve member object from button's data attribute
+			let member = JSON.parse(button.getAttribute("data-member"));
+
+			// Populate modal with member details
+			document.getElementById("memberid").innerText = member.id;
+			document.getElementById("memberName").innerText = member.name;
+			document.getElementById("memberEmail").innerText = `📧 Email: ${member.email}`;
+			document.getElementById("memberMobile").innerText = `📞 Mobile: ${member.contact}`;
+			document.getElementById("memberMembership_duration").innerText = `🏋️ Membership Duration: ${member.membership_duration}M`;
+			document.getElementById("memberPaidAmount").innerText = `💰 Paid Amount: ₹${member.paidAmount || 0}`;
+			document.getElementById("memberDueAmount").innerText = `⚠️ Due Amount: ₹${member.dueAmount || 0}`;
+			document.getElementById("memberStartDate").innerText = `📅 Start Date: ${member.membershipStartDate}`;
+			document.getElementById("memberEndDate").innerText = `⏳ End Date: ${member.membershipEndDate}`;
+			let memberid = member.id;
+			// Set profile image
+			let imageElement = document.getElementById("memberImage");
+			    let imageSrc = member.image ? `data:image/jpeg;base64,${member.image}` : 'default-avatar.png';
+			    imageElement.src = imageSrc;
+				
+				let unblockButton = document.getElementById("unblockBtn");
+			if (member.status === "BLOCKED") {
+				unblockButton.style.display = "inline-block"; // Show Unblock button
+				unblockButton.onclick = function () {
+					unblockMember(memberid);
+				};
+			} else {
+				unblockButton.style.display = "none"; // Hide Unblock button
+			}
+
+			// Show buttons
+			document.getElementById("updateBtn").style.display = "inline-block";
+			document.getElementById("historyBtn").style.display = "inline-block";
+
+			// Open the modal
+			let modal = new bootstrap.Modal(document.getElementById("memberDetailsModal"));
+			modal.show();
+		}
+		function unblockMember(memberId) {
+			fetch("http://localhost:8080/members/unblock/" + memberId, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				}
+			})
+				.then(response => response.text().then(text => {
+					if (response.ok) {
+						alert("Member unBlocked Successfully!");
+						location.reload();
+					} else {
+						alert("Failed to unblock member! Server Response: " + text);
+					}
+				}))
+				.catch(error => console.error("Error:", error));
+		}
+
+		document.getElementById('updateMemberForm').addEventListener('submit', function (event) {
+		    event.preventDefault(); // Prevent default form submission
+
+		    const formData = new FormData(this);
+		    const memberId = document.getElementById('updateMemberId').value;
+
+		    fetch(`http://localhost:8080/members/update/${memberId}`, {
+		        method: 'PUT',
+		        body: formData
+		    })
+		    .then(response => {
+		        if (!response.ok) {
+		            throw new Error(`Server responded with status: ${response.status}`);
+		        }
+		        return response.text();
+		    })
+		    .then(data => {
+		        alert(data); // ✅ Show API response
+		        document.getElementById('updateMemberForm').reset(); // ✅ Reset form
+		        $('#updateMemberModal').modal('hide'); // ✅ Hide modal after success
+		    })
+		    .catch(error => {
+		        console.error('Error:', error);
+		        alert('Error updating member: ' + error.message);
+		    });
+		});
+
+
+
+		function openUpdateForm() {
+		    // Get Member ID from Details Modal
+		    let memberId = document.getElementById("memberid").innerText;
+
+		    // Fetch Member Data
+		    fetch(`/members/${memberId}`) // Replace with your actual backend API
+		        .then(response => response.json())
+		        .then(member => {
+		            // Populate the Update Form
+		            document.getElementById("updateMemberId").value = member.id;
+		            document.getElementById("updateMemberName").value = member.name;
+		            document.getElementById("updateMemberEmail").value = member.email;
+		            document.getElementById("updateMemberContact").value = member.contact;
+		            document.getElementById("updateMemberDuration").value = member.membership_duration;
+		            document.getElementById("updateMemberStartDate").value = member.membershipStartDate;
+		            document.getElementById("updateMemberPaidAmount").value = member.paidAmount;
+		            document.getElementById("updateMemberDueAmount").value = member.dueAmount;
+
+		            // Set Image Preview
+		            let imageElement = document.getElementById("updateMemberImagePreview");
+		            imageElement.src = member.image_url ? member.image_url : "default-profile.png";
+
+		            // Show the Modal
+		            var updateModal = new bootstrap.Modal(document.getElementById("updateMemberModal"));
+		            updateModal.show();
+		        })
+		        .catch(error => console.error("Error fetching member details:", error));
+		}
+
+
+	</script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

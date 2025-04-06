@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navbar | Elite Fitness Club</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        /* Navbar Styling */
+        .navbar {
+            background: linear-gradient(45deg, #000, #111);
+            padding: 15px 20px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .navbar-brand {
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            color: white !important;
+            transition: color 0.3s ease-in-out;
+        }
+
+        .navbar-brand:hover {
+            color: #ffc107 !important;
+        }
+
+        /* Navbar Links */
+        .navbar-nav .nav-link {
+            font-size: 18px;
+            font-weight: 500;
+            color: white !important;
+            transition: color 0.3s ease-in-out, transform 0.2s ease-in-out;
+            padding: 10px 15px;
+            border-radius: 8px;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #ffc107 !important; /* Golden Hover Effect */
+            transform: scale(1.1);
+        }
+
+        /* Active Link */
+        .navbar-nav .active {
+            color: #ffc107 !important;
+            font-weight: 600;
+            position: relative;
+        }
+
+        /* Gym Name Styling */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+        .gym-name {
+            font-family: 'Poppins', sans-serif;
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffcc00;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 5px rgba(255, 204, 0, 0.8);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="newindex.html">
+                <img src="/images/Zealfit.jpg" alt="Gym Logo" width="60px" height="auto" class="me-2">
+                <span class="gym-name">ZealFit </span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="newindex.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="member.html">Member Details</a></li>
+                    <li class="nav-item"><a class="nav-link" href="member2.html">Member Management</a></li>
+                    <li class="nav-item"><a class="nav-link" href="plans.html">Diet</a></li>
+					<li class="nav-item"><a class="nav-link" href="plans2.html">Workout</a></li>
+                    <li class="nav-item"><a class="nav-link" href="alert.html">Alert</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <script>
+        // JavaScript to highlight the active page
+        document.addEventListener("DOMContentLoaded", function () {
+            let currentPage = window.location.pathname.split("/").pop(); // Get current file name
+            let navLinks = document.querySelectorAll(".navbar-nav .nav-link");
+
+            navLinks.forEach(link => {
+                if (link.getAttribute("href") === currentPage) {
+                    link.classList.add("active");
+                } else {
+                    link.classList.remove("active");
+                }
+            });
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

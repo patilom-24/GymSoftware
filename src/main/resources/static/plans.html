@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diet Plan</title>
+    <style>
+        * {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        h2 {
+            color: #fff;
+            margin: 20px 0;
+            text-align: center;
+        }
+        h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .plan-area ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .plan-area li {
+            padding: 8px 12px;
+            background: #f1f1f1;
+            border-radius: 5px;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        .container {
+            display: flex;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        .selection-area, .plan-area {
+            flex: 1;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+            color: #333;
+        }
+        .section {
+            margin-bottom: 25px;
+        }
+        .list {
+            margin-top: 12px;
+        }
+        button {
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 15px;
+    font-weight: bold;
+}
+button:hover {
+    background: linear-gradient(135deg, #0072ff, #00c6ff);
+}
+        input, select {
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            width: 100%;
+        }
+        .input-group {
+            margin-bottom: 20px;
+            margin-top: 20px;
+        }
+        #dietMember {
+            height: auto;
+        }
+        .header-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        .header-controls select {
+            width: 300px;
+            margin-top: 10px;
+            margin-bottom: 0;
+        }
+        .header-controls button {
+            margin-top: 10px;
+        }
+       /* Update these styles in your CSS */
+.background-container {
+    position: fixed; /* Change from absolute to fixed */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.slider {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+}
+
+.slide {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed; /* This helps maintain full coverage */
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+@media print {
+    .slide, .background-container, nav, footer {
+        display: none !important;
+    }
+
+    #plan-sections, .plan-area {
+        page-break-inside: avoid;
+    }
+}
+
+div, ul, li {
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+
+/* Ensure the body takes up full height */
+body {
+    color: #fff;
+    background-color: #111;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+}
+
+		.active {
+		    opacity: 1;
+		}
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+
+    <div id="navbar-container"></div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+			fetch("navbar.html") // Load navbar.html
+				.then(response => response.text())
+				.then(html => {
+					document.getElementById("navbar-container").innerHTML = html;
+
+					// Highlight Active Page
+					let currentPage = window.location.pathname.split("/").pop();
+					let navLinks = document.querySelectorAll(".navbar-nav .nav-link");
+
+					navLinks.forEach(link => {
+						if (link.getAttribute("href") === currentPage) {
+							link.classList.add("active");
+						} else {
+							link.classList.remove("active");
+						}
+					});
+				})
+				.catch(error => console.error("Error loading navbar:", error));
+		});
+    </script>
+    <!-- Background Image Slider -->
+    <div class="background-container">
+        <div class="slider">
+            <div class="slide active" style="background-image:url('/images/DSC07576.jpg');"></div>
+            <div class="slide" style="background-image:url('/images/DSC07607.JPG');"></div>
+            <div class="slide" style="background-image:url('/images/DSC07619.JPG');"></div>
+            <div class="slide" style="background-image:url('/images/DSC07620.JPG');"></div>
+            <div class="slide" style="background-image:url('/images/DSC07635.JPG');"></div>
+            <div class="slide" style="background-image:url('/images/DSC07687.JPG');"></div>
+            <div class="slide" style="background-image:url('/images/DSC07752.JPG');"></div>
+        </div>
+    </div>
+    <img id="zealfitLogo" src="/images/Zealfit.jpg" style="display:none;" />
+    
+    <div class="header-controls">
+        <select id="dietMember" >
+            <option value="">Select Member</option>
+        </select>
+        <button onclick="downloadDietPlan()">Download Plan</button>
+    </div>
+
+    <h2 style="color: whitesmoke; font-weight: bold;">Diet Plan Selection</h2>
+
+    <div class="container">
+        <!-- Selection Side -->
+        <div class="selection-area">
+            <div class="input-group">
+                <h3>Select Food Category</h3>
+                <select id="categorySelect" onchange="loadFoodItems()">
+                    <option value="">Select Category</option>
+                    <option value="BREAKFAST">Breakfast</option>
+                    <option value="BRUNCH">Brunch</option>
+                    <option value="LUNCH">Lunch</option>
+                    <option value="EVENING_SNACKS">Evening Snacks</option>
+                    <option value="DINNER">Dinner</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <h3>Select Food Item</h3>
+                <select id="foodSelect">
+                    <option value="">Select an item</option>
+                </select>
+                <input type="text" id="quantityInput" placeholder="Quantity" min="1" style="margin-top: 10px;">
+                <button onclick="addToPlan()" style="margin-top: 10px;">Add to Plan</button>
+            </div>
+
+            <div class="input-group">
+                <h3>Add New Food Item</h3>
+                <input type="text" id="newItemName" placeholder="Food Item Name">
+                <select id="newItemCategory" style="margin-top: 10px;">
+                    <option value="BREAKFAST">Breakfast</option>
+                    <option value="BRUNCH">Brunch</option>
+                    <option value="LUNCH">Lunch</option>
+                    <option value="EVENING_SNACKS">Evening Snacks</option>
+                    <option value="DINNER">Dinner</option>
+                </select>
+                <button onclick="addNewItem()" style="margin-top: 10px;">Add Item</button>
+            </div>
+        </div>
+
+        <!-- Plan Display Side -->
+        <div class="plan-area">
+            <h3>Final Diet Plan</h3>
+            <div id="plan-sections"></div>
+        </div>
+    </div>
+
+    <!-- Footer Container -->
+		
+
+		<script>
+			// Load the footer dynamically
+			document.addEventListener("DOMContentLoaded", function () {
+				fetch("footer.html") // Load footer.html
+					.then(response => response.text())
+					.then(html => {
+						document.getElementById("footer-container").innerHTML = html;
+					})
+					.catch(error => console.error("Error loading footer:", error));
+			});
+		</script>
+	
+		<!-- Link to external CSS -->
+		<link rel="stylesheet" href="footer.css">
+
+    <script>
+        let index = 0;
+        const slides = document.querySelectorAll(".slide");
+
+        function nextSlide() {
+            slides[index].classList.remove("active");
+            index = (index + 1) % slides.length;
+            slides[index].classList.add("active");
+        }
+
+        setInterval(nextSlide, 3000);
+        
+        const dietPlan = {};  
+
+        async function loadFoodItems() {
+            const category = document.getElementById("categorySelect").value;
+            const foodSelect = document.getElementById("foodSelect");
+
+            if (!category) {
+                foodSelect.innerHTML = '<option value="">Select an item</option>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:8080/food-items/category/${category}`);
+                const items = await response.json();
+
+                foodSelect.innerHTML = '<option value="">Select an item</option>'; 
+                items.forEach(item => {
+                    const option = document.createElement("option");
+                    option.value = item.name;
+                    option.textContent = item.name;
+                    foodSelect.appendChild(option);
+                });
+
+            } catch (error) {
+                console.error("Error fetching food items:", error);
+            }
+        }
+        
+		function downloadDietPlan() {
+				    const memberDropdown = document.getElementById("dietMember");
+				    const memberName = memberDropdown.options[memberDropdown.selectedIndex].text;
+
+				    if (!memberName || memberName === "Select Member") {
+				        alert("⚠️ Please select a member before downloading the diet plan!");
+				        return;
+				    }
+
+				    const planSections = document.getElementById("plan-sections");
+
+				    if (!planSections || planSections.innerText.trim() === "") {
+				        alert("⚠️ Please add some diet items before downloading!");
+				        return;
+				    }
+
+				    const planContent = planSections.cloneNode(true);
+				    planContent.style.fontSize = "14px";
+
+				    const wrapper = document.createElement("div");
+				    wrapper.style.padding = "20px";
+				    wrapper.style.fontFamily = "Arial, sans-serif";
+				    wrapper.style.color = "#000";
+
+				    const logo = document.getElementById("zealfitLogo").cloneNode(true);
+				    logo.style.display = "block";
+				    logo.style.height = "50px";
+
+				    const header = document.createElement("div");
+				    header.style.display = "flex";
+				    header.style.alignItems = "center";
+				    header.style.justifyContent = "space-between";
+				    header.style.borderBottom = "2px solid #000";
+				    header.style.marginBottom = "15px";
+				    header.innerHTML = `
+				        <div style="font-size: 22px; font-weight: bold;">ZealFit - Diet Plan</div>
+				        <div>${new Date().toLocaleDateString()}</div>
+				    `;
+				    header.prepend(logo);
+
+				    const nameTag = document.createElement("h3");
+				    nameTag.textContent = `Member: ${memberName}`;
+				    nameTag.style.margin = "10px 0";
+
+				    const title = document.createElement("h2");
+				    title.innerText = "Customized Diet Plan";
+				    title.style.marginTop = "10px";
+
+				    wrapper.appendChild(header);
+				    wrapper.appendChild(nameTag);
+				    wrapper.appendChild(title);
+				    wrapper.appendChild(planContent);
+
+				    // PDF generation
+					html2pdf().set({
+					    margin: 0.5,
+					    filename: `${memberName}_DietPlan.pdf`,
+					    image: { type: 'jpeg', quality: 0.98 },
+					    html2canvas: {
+					        scale: 2,
+					        useCORS: true,
+					        allowTaint: true,
+					        scrollY: 0 // helps to capture content beyond current view
+					    },
+					    jsPDF: {
+					        unit: 'in',
+					        format: 'a4',
+					        orientation: 'portrait'
+					    },
+					    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] } // 👈 Helps handle long content
+					}).from(wrapper).save();
+
+				}
+
+		        
+				function showNotification(message) {
+							const notification = document.getElementById('notification');
+							notification.textContent = message;
+							notification.classList.add('show');
+							
+							setTimeout(() => {
+								notification.classList.remove('show');
+							}, 3000);
+						}
+
+                
+        async function loadDietMembers() {
+            try {
+                let dietSelect = document.getElementById("dietMember");
+
+                // Show loading text
+                dietSelect.innerHTML = "<option>Loading...</option>";
+
+                console.log("Fetching members from API...");
+
+                // Fetch all members from backend
+                let response = await fetch("http://localhost:8080/members/all");
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                let members = await response.json();
+                console.log("Fetched members:", members); // Debugging log
+
+                // Clear previous options
+                dietSelect.innerHTML = "<option value=''>Select Member</option>";
+
+                // If API returns a list but members have no "diet" field, remove the filter
+                members.forEach(member => {
+                    let option = new Option(member.name, member.id);
+                    dietSelect.appendChild(option);
+                });
+
+                console.log("Diet members loaded successfully.");
+
+            } catch (error) {
+                console.error("❌ Error loading diet members:", error);
+                alert("⚠️ Failed to load diet members. Please check the console for details.");
+            }
+        }
+
+        // Load members when the page loads
+        document.addEventListener("DOMContentLoaded", loadDietMembers);
+
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch("navbar.html") 
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById("navbar-container").innerHTML = html;
+                })
+                .catch(error => console.error("Error loading navbar:", error));
+        });
+
+        function addToPlan() {
+            const category = document.getElementById("categorySelect").value;
+            const selectedItem = document.getElementById("foodSelect").value;
+            const quantity = document.getElementById("quantityInput").value;
+
+            if (!category || !selectedItem) {
+                alert("Please select a category, an item, and enter quantity!");
+                return;
+            }
+
+            if (!dietPlan[category]) {
+                dietPlan[category] = [];
+            }
+
+            dietPlan[category].push({ item: selectedItem, qty: quantity });
+
+            updatePlanDisplay();
+        }
+
+        function updatePlanDisplay() {
+            const planContainer = document.getElementById("plan-sections");
+            planContainer.innerHTML = "";
+
+            for (const category in dietPlan) {
+                if (dietPlan[category].length > 0) {
+                    const sectionDiv = document.createElement("div");
+                    sectionDiv.classList.add("section");
+                    sectionDiv.innerHTML = `<h4>${category}</h4><ul id="list-${category}" class="list"></ul>`;
+                    planContainer.appendChild(sectionDiv);
+
+                    const list = document.getElementById(`list-${category}`);
+                    dietPlan[category].forEach(entry => {
+                        const listItem = document.createElement("li");
+                        listItem.innerText = `${entry.item} - ${entry.qty}`;
+                        list.appendChild(listItem);
+                    });
+                }
+            }
+        }
+        
+        async function addNewItem() {
+            const itemName = document.getElementById("newItemName").value;
+            const category = document.getElementById("newItemCategory").value;
+
+            if (!itemName) {
+                alert("Enter a valid item name.");
+                return;
+            }
+
+            const foodItem = { name: itemName, category: category.toUpperCase() };
+
+            try {
+                await fetch('http://localhost:8080/food-items/add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(foodItem)
+                });
+
+                alert("Item added successfully!");
+                loadFoodItems(); 
+            } catch (error) {
+                console.error("Error adding new item:", error);
+            }
+        }
+    </script>
+</body>
+</html>
