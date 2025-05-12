@@ -195,7 +195,7 @@
 					<form id="renewForm">
 						<input type="hidden" id="renewMemberId">
 						<label for="renewMembershipType">Select Renewal Duration:</label>
-						<select class="form-control mt-2" id="membershipType">
+						<select class="form-control mt-2" id="membership_duration"onchange="calculateEndDate()>
 							<option value="1">1 Month</option>
 													    <option value="2">2 Months</option>
 													    <option value="3">3 Months</option>
@@ -210,10 +210,10 @@
 													    <option value="12">12 Months (1 Year)</option>
 													    <option value="13">13 Months</option>
 													    <option value="14">14 Months</option>
-													    <option value="15">15 Months</option>n>
+													    <option value="15">15 Months</option>
 						</select>
 						<label class="mt-2">New Start Date:</label>
-						<input type="date" class="form-control" id="membershipStartDate" onchange="calculateEndDate()"">
+						<input type="date" class="form-control" id="membershipStartDate" onchange="calculateEndDate()">
 			                    <label class=" mt-2">New End Date:</label>
 						<input type="date" class="form-control" id="membershipEndDate">
 						<button type="button" class="btn btn-success w-100 mt-3" onclick="confirmRenewal()">Confirm
@@ -388,36 +388,68 @@
 				console.error(`Error fetching ${days}-day expiring members:`, error);
 			});
 	}
+	
+	function calculateEndDate() {
+	    const startDateInput = document.getElementById("membershipStartDate");
+	    const durationInput = document.getElementById("membership_duration");
+	    const endDateInput = document.getElementById("membershipEndDate");
+
+	    const startDateValue = startDateInput.value;
+	    const durationMonths = parseInt(durationInput.value);
+
+	    if (!startDateValue || isNaN(durationMonths)) {
+	        endDateInput.value = "";
+	        return;
+	    }
+
+	    const startDate = new Date(startDateValue);
+	    const endDate = new Date(startDate);
+	    endDate.setMonth(endDate.getMonth() + durationMonths);
+
+	    // Format YYYY-MM-DD
+	    const yyyy = endDate.getFullYear();
+	    const mm = String(endDate.getMonth() + 1).padStart(2, '0');
+	    const dd = String(endDate.getDate()).padStart(2, '0');
+
+	    endDateInput.value = `${yyyy}-${mm}-${dd}`;
+	}
+
+	// Also trigger on membership duration change
+	document.addEventListener("DOMContentLoaded", function () {
+	    document.getElementById("membership_duration").addEventListener("change", calculateEndDate);
+	});
+	
 	// Send Renewal Request
 	function confirmRenewal() {
-		let memberId = document.getElementById("renewMemberId").value;
-		let membershipType = document.getElementById("membershipType").value;
-		let startDate = document.getElementById("membershipStartDate").value;
-		let endDate = document.getElementById("membershipEndDate").value;
+				let memberId = document.getElementById("renewMemberId").value;
+				let membership_duration = document.getElementById("membership_duration").value;
+				let startDate = document.getElementById("membershipStartDate").value;
+				let endDate = document.getElementById("membershipEndDate").value;
 
-		if (!memberId || !membershipType || !startDate || !endDate) {
-			alert("Please fill all fields!");
-			return;
-		}
+				if (!memberId || !membership_duration || !startDate || !endDate) {
+					alert("Please fill all fields!");
+					return;
+				}
 
-		fetch(`http://localhost:8080/members/renew/${memberId}`, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				membershipType: membershipType,
-				membershipStartDate: startDate,
-				membershipEndDate: endDate
-			})
-		})
-			.then(response => response.text())
-			.then(data => {
-				alert(data);
-				location.reload();
-			})
-			.catch(error => console.error("Error:", error));
-	}
+				fetch(`http://localhost:8080/members/renew/${memberId}`, {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						membership_duration: membership_duration,
+						membershipStartDate: startDate,
+						membershipEndDate: endDate
+					})
+				})
+					.then(response => response.text())
+					.then(data => {
+						alert(data);
+						location.reload();
+					})
+					.catch(error => console.error("Error:", error));
+			}
+
 
 	function renewMembership(id) {
 		$("#renewMemberId").val(id);
