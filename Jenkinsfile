@@ -7,7 +7,7 @@ pipeline {
   }
 
   tools {
-    maven 'MAVEN_HOME'
+    maven C:\Program Files\Apache\Maven\apache-maven-3.9.6\bin
     jdk 'JDK17'
   }
 
