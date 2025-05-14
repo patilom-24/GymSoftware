@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  mysql-db:
+    image: mysql:8
+    container_name: mysql-container
+    environment:
+      MYSQL_ROOT_PASSWORD: 2596
+      MYSQL_DATABASE: gym_db
+    ports:
+      - "3306:3306"
+    networks:
+      - springnet
+
+  spring-app:
+    build: .
+    depends_on:
+      - mysql-db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/gym_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 2596
+    ports:
+      - "8080:8080"
+    networks:
+      - springnet
+
+networks:
+  springnet:
+    driver: bridge
