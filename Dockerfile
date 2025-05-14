@@ -1,4 +1,4 @@
-FROM openjdk:21-jdk-apline
+FROM openjdk:17-jdk-apline
 VOLUME /tmp
 ARG jarfile=target/*.jar
 COPY ${jarfile} app.jar
